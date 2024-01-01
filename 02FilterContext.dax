@@ -1,0 +1,31 @@
+02Monto de Ventas = 
+SUMX(
+    fctVentas,
+    fctVentas[Monto de Venta]
+)
+
+02Monto de Ventas Asia = 
+CALCULATE(
+    [Monto de Ventas],
+    dimCliente[Continente] = "Asia"
+)
+
+02Nro Producto Vendidos = 
+COUNTROWS(
+    VALUES(fctVentas[ID_Producto])
+)
+
+02Nro Registros = COUNTROWS(fctVentas)
+
+02Nro Registros > 2 Unidades = 
+COUNTROWS(
+    FILTER(
+        fctVentas,
+        fctVentas[Unidades] > 2
+    )
+)
+
+02Numero de Clientes = DISTINCTCOUNT(fctVentas[ID_Cliente])
+
+02Unidades Vendidas = SUM(fctVentas[Unidades])
+

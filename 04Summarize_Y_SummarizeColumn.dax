@@ -1,0 +1,105 @@
+04Unidades Vendidas = SUM(fctVentas[Unidades])
+
+04Ultimo Periodo Datos = 
+"Reporte Actualizado a: " &
+MAXX(
+    SUMMARIZE(
+        fctVentas,
+        dimCalendario[Periodo]
+    ),
+    dimCalendario[Periodo]
+)
+
+04Promedio Diario = 
+AVERAGEX(
+    VALUES(dimCalendario[Fecha]), [Monto de Ventas]
+)
+
+04Numero de Clientes = DISTINCTCOUNT(fctVentas[ID_Cliente])
+
+04Nro Registros = COUNTROWS(fctVentas)
+
+04Monto de Ventas = SUM(fctVentas[Monto de Venta])
+
+04Monto Promedio Diario por Cliente (SUMMARIZECOLUMNS) = 
+AVERAGEX(
+    SUMMARIZECOLUMNS(
+        dimCalendario[Fecha],
+        dimCliente[ID_Cliente],
+        fctVentas
+    ),
+    [Monto de Venta]
+)
+
+04Monto Promedio Diario por Cliente = 
+AVERAGEX(
+    SUMMARIZE(
+            fctVentas,
+            dimCalendario[Fecha],
+            dimCliente[ID_Cliente]
+    ),
+    [Monto de Venta]
+)
+
+04Monto Promedio Diario = 
+AVERAGEX(
+    VALUES(dimCalendario[Fecha]),
+    [Monto de Venta]
+)
+
+04Mayor Monto Diario por Cliente = 
+MAXX(
+        SUMMARIZE(
+                fctVentas,
+                dimCalendario[Fecha],
+                dimCliente[ID_Cliente]
+        ),
+        [Monto de Venta]
+)
+
+
+
+04Mejor Cliente Diario = 
+VAR MejorMonto = [Mayor Monto Diario por Cliente]
+VAR MejorCliente = 
+FILTER(
+    SUMMARIZE(
+        fctVentas,
+        dimCliente[Nombre Cliente]
+    ),
+    [Mayor Monto Diario por Cliente] = MejorMonto
+)
+VAR Resultado =
+CONCATENATEX(
+    MejorCliente,
+    dimCliente[Nombre Cliente],","
+)
+RETURN Resultado
+
+
+
+04Mejor Cliente = 
+VAR MejorMonto = [Mayor Monto por Cliente]
+VAR MejorCliente = 
+FILTER(
+    SUMMARIZE(
+        fctVentas,
+        dimCliente[Nombre Cliente]
+    ),
+    [Mayor Monto por Cliente] = MejorMonto
+)
+VAR Resultado =
+CONCATENATEX(
+    MejorCliente,
+    dimCliente[Nombre Cliente],","
+)
+RETURN Resultado
+
+04Mayor Monto por Cliente = 
+MAXX(
+    SUMMARIZE(
+        fctVentas,
+        dimCliente[ID_Cliente]
+    ),
+    [Monto de Venta]
+)

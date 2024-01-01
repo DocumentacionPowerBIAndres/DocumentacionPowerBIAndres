@@ -1,0 +1,18 @@
+Monto de Ventas = 
+SUMX(
+    fctVentas,
+    fctVentas[Unidades] * fctVentas[Precio Unitario]
+)
+
+Monto de Ventas Precio Lista = 
+SUMX(
+    fctVentas,
+    fctVentas[Unidades] * RELATED(dimProducto[Precio Lista])
+)
+
+Numero de Clientes = DISTINCTCOUNT(fctVentas[ID_Cliente])
+
+Unidades Vendidas = SUM(fctVentas[Unidades])
+
+/////////////////////////////////////
+

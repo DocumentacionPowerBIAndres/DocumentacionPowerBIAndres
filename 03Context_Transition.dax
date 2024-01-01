@@ -1,0 +1,28 @@
+03Monto de Venta Clientes que Compraron > 7 Unidades = 
+CALCULATE(
+    [Monto de Ventas],
+    FILTER(
+        dimCliente,
+        [Unidades Vendidas] > 7
+    )
+)
+
+03Monto de Ventas = SUM(fctVentas[Monto de Venta])
+
+03Nro Registros = COUNTROWS(fctVentas)
+
+03Numero de Clientes = DISTINCTCOUNT(fctVentas[ID_Cliente])
+
+03Unidades Vendidas = SUM(fctVentas[Unidades])
+
+03MontoMonto de Venta Mejor Dia = 
+MAXX(
+    VALUES(dimCalendario[Fecha]),
+    [Monto de Ventas]
+)
+
+03MontoNumero de Clientes Rev = 
+SUMX(
+    VALUES(dimCalendario[Mes  Año]),
+    [Numero de Clientes]
+)

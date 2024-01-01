@@ -1,0 +1,147 @@
+06Monto de Venta Primeros 60 dias = 
+    VAR PrimeraFecha = MIN(fctVentas[Fecha Orden])
+    VAR TablaFiltro =
+    FILTER(
+        VALUES(dimCalendario[Fecha]),
+        dimCalendario[Fecha] >= PrimeraFecha && 
+        dimCalendario[Fecha] < PrimeraFecha + 60
+    )
+    VAR Resultado =
+    CALCULATE(
+        [Monto de Ventas],
+        TablaFiltro
+    )
+    RETURN Resultado
+
+--------------------------------------------------
+06Monto de Venta Tienda Asia = 
+    CALCULATE(
+        [Monto de Ventas],
+        dimCliente[Continente] = "Asia"
+    )
+--------------------------------------------------
+06Monto de Venta Tienda Continente Asia =     
+    CALCULATE(
+        [06Monto de Ventas],
+        dimTienda[Continente] = "Asia"
+    )
+--------------------------------------------------
+06Monto de Venta Tienda Continente Asia = 
+    CALCULATE(
+        [Monto de Ventas],
+        dimTienda[Continente] = "Asia"
+    )
+--------------------------------------------------
+06Monto de Ventas > 1 Hijo = 
+    CALCULATE(
+        [Monto de Ventas],
+        dimCliente[Numero de Hijos] > 2
+    )
+--------------------------------------------------
+06Monto de Ventas 1 Hijo = 
+    CALCULATE(
+        [Monto de Ventas],
+        dimCliente[Numero de Hijos] = 1
+    )
+--------------------------------------------------
+06Monto de Ventas 1 o 2 Hijos = 
+    CALCULATE(
+        [Monto de Ventas],
+        dimCliente[Numero de Hijos] IN {1,2}
+    )
+--------------------------------------------------
+06Monto de Ventas Clientes Asia o Masculino = 
+    CALCULATE(
+        [Monto de Ventas],
+        dimCliente[Continente] = "Asia" ||
+        dimCliente[Genero] = "M"
+    )
+--------------------------------------------------
+06Monto de Ventas Clientes Asia o Tienda Asia = 
+    CALCULATE(
+        [06Monto de Ventas],
+        FILTER(
+            SUMMARIZE(
+                fctVentas,
+                dimCliente[Continente],
+                dimTienda[Continente]
+            ),
+            dimCliente[Continente] = "Asia" || 
+            dimTienda[Continente] = "Asia"
+        )
+    )
+--------------------------------------------------
+06Monto de Ventas Clientes Asia y Masculino = 
+    CALCULATE(
+        [Monto de Ventas],
+        dimCliente[Continente] = "Asia",
+        dimCliente[Genero] = "M"
+    )
+--------------------------------------------------
+06Monto de Ventas ni 1 ni 2 Hijos = 
+    CALCULATE(
+        [Monto de Ventas],
+        NOT dimCliente[Numero de Hijos] IN {1,2}
+    )
+--------------------------------------------------
+06Monto de Ventas O = 
+    VAR Combinaciones =
+    CROSSJOIN(ALL(dimProducto[Categoria]),ALL(dimCliente[Genero]))
+    VAR CombinacionesSeleccionadas =
+    FILTER(
+        Combinaciones,
+        dimProducto[Categoria] IN VALUES(dimProducto[Categoria]) ||
+        dimCliente[Genero] IN VALUES(dimCliente[Genero]) 
+    )
+    VAR Resultado =
+    CALCULATE([Monto de Ventas],CombinacionesSeleccionadas)
+    RETURN Resultado
+
+--------------------------------------------------
+06Nro Registros = 
+    COUNTROWS(fctVentas)
+--------------------------------------------------
+06Numero de Clientes = 
+    DISTINCTCOUNT(fctVentas[ID_Cliente])
+--------------------------------------------------
+06Numero de Clientes > 1 producto distinto = 
+    CALCULATE(
+        [06Numero de Clientes],
+        FILTER(
+            dimCliente,
+            CALCULATE(
+                DISTINCTCOUNT(fctVentas[ID_Producto]) 
+            ) > 1
+        )
+    )
+--------------------------------------------------
+06Numero de Ordenes = 
+    DISTINCTCOUNT(fctVentas[CodOrden])
+--------------------------------------------------
+06Numero de Ordenes de 1 Registro = 
+    CALCULATE(
+        DISTINCTCOUNT(fctVentas[CodOrden]),
+        FILTER(
+            VALUES(fctVentas[CodOrden]),
+            CALCULATE(COUNTROWS(fctVentas)) = 1
+        )
+    )
+--------------------------------------------------
+06Promedio Diario = 
+    AVERAGEX(
+        VALUES(dimCalendario[Fecha]), [Monto de Ventas]
+    )
+--------------------------------------------------
+06Ultimo Periodo Datos = 
+    "Reporte Actualizado a: " &
+    MAXX(
+        SUMMARIZE(
+            fctVentas,
+            dimCalendario[Periodo]
+        ),
+        dimCalendario[Periodo]
+    )
+--------------------------------------------------
+06Unidades Vendidas = 
+    SUM(fctVentas[Unidades])
+--------------------------------------------------

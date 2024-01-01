@@ -1,0 +1,36 @@
+05Unidades Vendidas = SUM(fctVentas[Unidades])
+
+05Ultimo Periodo Datos = 
+"Reporte Actualizado a: " &
+MAXX(
+    SUMMARIZE(
+        fctVentas,
+        dimCalendario[Perio   ),
+    dimCalendario[Periodo]
+)
+
+05Promedio Diario = 
+AVERAGEX(
+    VALUES(dimCalendario[Fecha]), [Monto de Ventas]
+)
+
+05Participacion % = 
+DIVIDE(
+    [Monto de Ventas],
+    [Monto de Ventas (ALL)]
+)
+
+05Numero de Clientes = DISTINCTCOUNT(fctVentas[ID_Cliente])
+
+
+05Nro Registros = COUNTROWS(fctVentas)
+
+
+05Monto de Ventas (ALL) = 
+SUMX(
+    ALLSELECTED(fctVentas),
+    fctVentas[Unidades] * fctVentas[Precio Unitario]
+)
+
+05Monto de Ventas = SUM(fctVentas[Monto de Venta])
+
